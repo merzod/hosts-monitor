@@ -1,0 +1,50 @@
+<?xml version="1.0"  encoding="utf-8" ?>
+<project name="host_monitor" basedir="." default="pack">
+
+    <property name="src" value="${basedir}/src"/>
+    <property name="bld" value="${basedir}/bld"/>
+    <property name="lib" value="${basedir}/lib"/>
+    <property name="bin" value="${basedir}/bin"/>
+    <property name="jarfile" value="${bin}/HostMonitor.jar"/>
+
+    <path id="class.path">
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="build">
+        <mkdir dir="${bld}"/>
+        <javac destdir="${bld}" srcdir="${src}">
+            <classpath refid="class.path"/>
+        </javac>
+    </target>
+
+    <target name="pack" depends="build">
+        <copy todir="${bld}">
+            <fileset dir="${src}">
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+        <jar destfile="${jarfile}">
+            <fileset dir="${bld}"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.merzod.monitor.host.Starter"/>
+            </manifest>
+        </jar>
+        <copy todir="${bin}">
+            <fileset dir="${basedir}">
+                <include name="config.xml"/>
+                <include name="start.sh"/>
+            </fileset>
+            <fileset dir="${src}">
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${bin}/lib">
+            <fileset dir="${lib}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+</project>
