@@ -26,8 +26,10 @@ public class TestHostMonitor extends TestCase implements MailSender{
         mails = new HashMap<String, String>();
     }
 
-    // success only
-    public void testPrintResultSuccess() throws Exception {
+    /**
+     * Create only one successful task, and check that mail will not be send
+     */
+    public void testPrintResultSuccess() {
         monitor.table = new HashMap<Target, Result>();
         Target target = new Target(Target.Protocol.TCP, "host1", null);
         monitor.table.put(target, new Result(target, "success"));
@@ -35,8 +37,10 @@ public class TestHostMonitor extends TestCase implements MailSender{
         assertEquals("No mails should be send", 0, mails.size());
     }
 
-    // failed report to root
-    public void testPrintResultFailedToRoot() throws Exception {
+    /**
+     * Check that notification about failed task will be send to root
+     */
+    public void testPrintResultFailedToRoot() {
         monitor.table = new HashMap<Target, Result>();
         Target target = new Target(Target.Protocol.TCP, "host1", null);
         monitor.table.put(target, new Result(target, new Exception("failed")));
@@ -45,8 +49,11 @@ public class TestHostMonitor extends TestCase implements MailSender{
         assertEquals("Email should be send to root only", Config.getInstance().getListener(), mails.keySet().iterator().next());
     }
 
-    // failed report to both root and target listener
-    public void testPrintResultFailed() throws Exception {
+    /**
+     * Create 2 tasks, both will fail. One notification should be send to both root and task listener.
+     * And other only to root.
+     */
+    public void testPrintResultFailed() {
         final String email = "test@com";
         // fill test results
         monitor.table = new HashMap<Target, Result>();
@@ -67,6 +74,11 @@ public class TestHostMonitor extends TestCase implements MailSender{
         assertEquals(email + " should receive ", monitor.getMessage(r2), testMail);
     }
 
+    /**
+     * Check that failed task notification will be send once, then will be skipped withing configured
+     * skipInterval and then will be send again.
+     * @throws Exception
+     */
     public void testPrintResultDelay() throws Exception {
         // fill test results
         monitor.table = new HashMap<Target, Result>();
