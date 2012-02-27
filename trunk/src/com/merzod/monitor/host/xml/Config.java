@@ -25,6 +25,8 @@ public class Config {
     private SMTPConfig smtp;
     @Element (required = false)
     private String listener;
+    @Element
+    private long skipInterval;
 
     private static Config me;
     public static final String file = "config.xml";
@@ -51,16 +53,28 @@ public class Config {
         return listener;
     }
 
+    public long getSkipInterval() {
+        return skipInterval;
+    }
+
     public static Config getInstance() {
         if(me == null) {
             throw new RuntimeException("Config hasn't been loaded");
         }
         return me;
     }
-    
+
     public static void load() throws Exception {
+        load(file);
+    }
+    
+    public static void load(String file) throws Exception {
         Serializer serializer = new Persister();
         File cfgFile = new File(file);
         me = serializer.read(Config.class, cfgFile);
+
+        me.interval *= 1000;
+        me.tcpTimeout *= 1000;
+        me.skipInterval *= 1000;
     }
 }

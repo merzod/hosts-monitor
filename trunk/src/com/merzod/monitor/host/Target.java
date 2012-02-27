@@ -16,6 +16,7 @@ public class Target {
     private String listener;
     @Attribute (required = false)
     private int port = 0;
+    private long lastFailed;
 
     public Target() {
     }
@@ -40,6 +41,14 @@ public class Target {
 
     public String getListener() {
         return listener;
+    }
+
+    public long getLastFailed() {
+        return lastFailed;
+    }
+
+    public void setLastFailed(long lastFailed) {
+        this.lastFailed = lastFailed;
     }
 
     @Override

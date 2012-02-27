@@ -10,6 +10,8 @@ import com.merzod.monitor.host.ping.TcpPing;
 import com.merzod.monitor.host.xml.Config;
 import org.apache.log4j.Logger;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -22,6 +24,7 @@ public class HostMonitor implements Monitor {
     private Map<Target.Protocol, Ping> pings;
     private int runThreads = 0;
     private MailSender mailSender = new MailSenderImpl();
+    private final DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 
     public HostMonitor() {
         table = Collections.synchronizedMap(new HashMap<Target, Result>());
@@ -83,13 +86,28 @@ public class HostMonitor implements Monitor {
         // all failed message will be send to root and target listener if there is any
         // get root's email
         String rootEmail = Config.getInstance().getListener();
+        long skip = Config.getInstance().getSkipInterval();
+        long now = new Date().getTime();
         for(Target target : table.keySet()) {
-            Result result = table.get(target);
-            if(result.getState() != Result.State.SUCCESS) {
-                String email = target.getListener();
-                // add result to target's listener and to root listener
-                results.get(email).add(result);
-                results.get(rootEmail).add(result);
+            // if target failed long enough ago - send email
+            long passed = now - target.getLastFailed();
+            boolean skp = passed > skip;
+            String lastFailed;
+            if(target.getLastFailed() == 0) {
+                lastFailed = "Never";
+            } else {
+                lastFailed = format.format(new Date(target.getLastFailed()));
+            }
+            log.debug(target + " last time failed at: " + lastFailed + " passed: " + passed + " ms skip: " + !skp);
+            if(skp) {
+                target.setLastFailed(now);
+                Result result = table.get(target);
+                if(result.getState() != Result.State.SUCCESS) {
+                    String email = target.getListener();
+                    // add result to target's listener and to root listener
+                    results.get(email).add(result);
+                    results.get(rootEmail).add(result);
+                }
             }
         }
         return results;
