@@ -8,7 +8,7 @@
     <!-- The main listener, will receive full report in case of any error -->
     <listener>merzod@gmail.com</listener>
     <!-- Skip interval, will skip duplicate errors within 'skipInterval' sec -->
-    <skipInterval>60</skipInterval>
+    <skipInterval>1</skipInterval>
 
     <!-- SMTP configuration properties -->
     <smtp>
