@@ -8,13 +8,16 @@ public class Result {
     private State state;
     private String comments;
     private Exception exception;
+    private Target target;
 
-    public Result(String comments) {
+    public Result(Target t, String comments) {
+        this.target = t;
         this.state = State.SUCCESS;
         this.comments = comments;
     }
 
-    public Result(Exception e) {
+    public Result(Target t, Exception e) {
+        this.target = t;
         this.state = State.FAILED;
         this.exception = e;
     }
@@ -29,6 +32,10 @@ public class Result {
 
     public Exception getException() {
         return exception;
+    }
+
+    public Target getTarget() {
+        return target;
     }
 
     @Override
