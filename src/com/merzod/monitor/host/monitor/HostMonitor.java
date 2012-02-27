@@ -98,7 +98,13 @@ public class HostMonitor implements Monitor {
             } else {
                 lastFailed = format.format(new Date(target.getLastFailed()));
             }
-            log.debug(target + " last time failed at: " + lastFailed + " passed: " + passed + " ms skip: " + !skp);
+            // email state, in case of skipping - on info level, otherwise on debug
+            String message = target + " last time failed at: " + lastFailed + " passed: " + passed + " ms skip: " + !skp;
+            if(!skp) {
+                log.info(message);
+            } else {
+                log.debug(message);
+            }
             if(skp) {
                 target.setLastFailed(now);
                 Result result = table.get(target);
@@ -117,7 +123,6 @@ public class HostMonitor implements Monitor {
      * Will send the result by mail to corresponding listeners
      */
     void printResult() {
-        log.info("Start Monitor " + this);
         Map<String, List<Result>> result = reformatResult();
         // if any failed - send email to listeners
         for(String email : result.keySet()) {
@@ -183,7 +188,13 @@ public class HostMonitor implements Monitor {
                 result = new Result(target, new Exception("Unsupported protocol: " + target.getProtocol()));
             }
             table.put(target, result);
-            log.debug("Stop PingThread for " + target + " result " + result);
+            // yell about the result in case of failed, otherwise just debug
+            String message = "Stop PingThread for " + target + " result " + result;
+            if(result.getState() == Result.State.FAILED) {
+                log.error(message);
+            } else {
+                log.debug(message);
+            }
 
             synchronized (HostMonitor.this) {
                 runThreads--;
