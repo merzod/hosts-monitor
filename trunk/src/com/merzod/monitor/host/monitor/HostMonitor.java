@@ -62,65 +62,70 @@ public class HostMonitor implements Monitor {
         }).start();
     }
 
-    void printResult() {
-        // the map of email bodies. the key - email, value - body
-        Map<String, StringBuilder> results = new HashMap<String, StringBuilder>() {
+    /**
+     * The result of monitoring is in Map <Target, Result>, for sending its needed to reformat the result
+     * to Map <Email, List<Result>>
+     * @return
+     */
+    private Map<String, List<Result>> reformatResult() {
+        // key - email, value - list of results
+        Map<String, List<Result>> results = new HashMap<String, List<Result>>() {
             @Override
-            public StringBuilder get(Object key) {
-                // if the is no value for such key - create and put it
-                StringBuilder sb = super.get(key);
-                if (sb == null) {
-                    sb = new StringBuilder();
-                    put((String) key, sb);
+            public List<Result> get(Object key) {
+                List<Result> list = super.get(key);
+                if(list == null) {
+                    list = new ArrayList<Result>();
+                    put((String) key, list);
                 }
-                return sb;
+                return list;
             }
         };
-        // the map of email subjects
-        Map<String, String> subjects = new HashMap<String, String>();
-        // the 2 part of root's body        
-        StringBuilder bodyFailed = new StringBuilder("Failed:\n");
-        StringBuilder bodySuccess = new StringBuilder("Successful:\n");
-        // root's subject
-        String subject = null;
-        for (Target target : table.keySet()) {
+        // all failed message will be send to root and target listener if there is any
+        // get root's email
+        String rootEmail = Config.getInstance().getListener();
+        for(Target target : table.keySet()) {
             Result result = table.get(target);
-            if (result.getState() == Result.State.SUCCESS) {
-                bodySuccess.append(target).append("\t").append(table.get(target)).append("\n");
-            } else {
-                // format error and set it to:
-                // - bodyFailed (for mail listener)
-                String error = getErrorMessage(target);
-                bodyFailed.append(error);
-                // - root's subject if there is no any
-                if(subject == null) {
-                    subject = error;
-                }
-                // - map of bodies with key target.getListener()
-                String key = target.getListener();
-                results.get(key).append(error);
-                // - map of subjects with key target.getListener() if there is no any
-                if(!subjects.containsKey(key)) {
-                    subjects.put(key, error);
-                }
+            if(result.getState() != Result.State.SUCCESS) {
+                String email = target.getListener();
+                // add result to target's listener and to root listener
+                results.get(email).add(result);
+                results.get(rootEmail).add(result);
             }
         }
+        return results;
+    }
+
+    /**
+     * Will send the result by mail to corresponding listeners
+     */
+    void printResult() {
+        log.info("Start Monitor " + this);
+        Map<String, List<Result>> result = reformatResult();
         // if any failed - send email to listeners
-        if (results.size() > 0) {
-            // send mail with full report to main listener
-            mailSender.send(Config.getInstance().getListener(), bodyFailed + "\n" + bodySuccess, subject);
-            for (String to : results.keySet()) {
-                // send short emails to all target listeners
-                mailSender.send(to, results.get(to).toString(), subjects.get(to));
+        for(String email : result.keySet()) {
+            // construct body from the List of Results
+            StringBuilder body = new StringBuilder();
+            List<Result> list = result.get(email);
+            // keep first result for subject
+            Result first = null;
+            for(Result res : list) {
+                if(first == null) first = res;
+                body.append(getMessage(res));
             }
+            mailSender.send(email, body.toString(), first == null ? null : first.getTarget().toString());
         }
 
         log.info("Stop Monitor " + this);
     }
-    
-    String getErrorMessage(Target target) {
-        StringBuilder error = new StringBuilder(target.toString());
-        error.append("\t").append(table.get(target)).append("\n");
+
+    /**
+     * Construct the message from result
+     * @param result to process
+     * @return the String message
+     */
+    String getMessage(Result result) {
+        StringBuilder error = new StringBuilder();
+        error.append(result.getTarget()).append("\t").append(result).append("\n");
         return error.toString();
     }
 
@@ -152,12 +157,12 @@ public class HostMonitor implements Monitor {
                     ping.ping(target);
                     long stop = new Date().getTime();
                     double sec = (double) (stop - start) / 1000;
-                    result = new Result("within " + sec + " sec");
+                    result = new Result(target, "within " + sec + " sec");
                 } catch (Exception e) {
-                    result = new Result(e);
+                    result = new Result(target, e);
                 }
             } else {
-                result = new Result(new Exception("Unsupported protocol: " + target.getProtocol()));
+                result = new Result(target, new Exception("Unsupported protocol: " + target.getProtocol()));
             }
             table.put(target, result);
             log.debug("Stop PingThread for " + target + " result " + result);
