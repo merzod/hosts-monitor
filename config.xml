@@ -1,0 +1,31 @@
+<!-- Configuration of HostMonitor -->
+<config>
+    <!-- Common configuration properties -->
+    <!-- Monitoring interval, will run monitoring process each 'interval' ms -->
+    <interval>30000</interval>
+    <!-- TCP Timeout, will assume that ping failed after 'tcpTimeout' ms pass -->
+    <tcpTimeout>3000</tcpTimeout>
+    <!-- The main listener, will receive full report in case of any error -->
+    <listener>merzod@gmail.com</listener>
+
+    <!-- SMTP configuration properties -->
+    <smtp>
+        <!-- SMTP Host -->
+        <host>mail.comodo.od.ua</host>
+        <!-- Authentication data for SMTP Host -->
+        <user>apavlenko</user>
+        <!-- <password></password> -->
+
+        <!-- Data of notification mail -->
+        <from>parabola@comodo.com</from>
+        <subject>Error while monitoring</subject>
+    </smtp>
+
+    <!-- The list of targets to monitor -->
+    <targets>
+        <!-- Example of target, the 'listener' attribute is optional
+        <target protocol="TCP" host="localhost" listener="someone@mail.com"/> -->
+        <!--target protocol="TCP" host="127.0.0.1"/-->
+        <target protocol="SOCKET" host="127.0.0.1" port="8443"/>
+    </targets>
+</config>

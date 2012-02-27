@@ -1,0 +1,2 @@
+classpath=lib/junit-4.4.jar:lib/log4j-1.2.15.jar:lib/mail.jar:lib/simple-xml-2.6.2.jar:lib/stax-1.2.0.jar:lib/stax-api-1.0.1.jar:lib/xpp3-1.1.3_8.jar:HostMonitor.jar
+java -cp $classpath com.merzod.monitor.host.Starter
