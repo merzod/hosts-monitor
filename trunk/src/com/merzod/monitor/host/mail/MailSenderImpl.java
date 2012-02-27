@@ -18,7 +18,7 @@ public class MailSenderImpl implements MailSender {
     @Override
     public void send(String to, String body, String subject) {
         if(to != null) {
-            log.info("Sending email to " + to);
+            log.debug("Sending email to " + to);
             Session session = Session.getInstance(Config.getInstance().getSmtp().getProperties());
             MimeMessage email = new MimeMessage(session);
             try {
@@ -27,6 +27,7 @@ public class MailSenderImpl implements MailSender {
                 if(subject != null && !subj.isEmpty()) {
                     subj += " "+subject;
                 }
+                log.info("Sending email to " + to+": "+subj);
                 email.setSubject(subj);
                 email.setText(body);
                 email.setFrom(new InternetAddress(Config.getInstance().getSmtp().getFrom()));
