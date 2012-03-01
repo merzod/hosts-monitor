@@ -140,7 +140,7 @@ public class HostMonitor implements Monitor {
                 if(first == null) first = res;
                 body.append(getMessage(res));
             }
-            mailSender.send(email, body.toString(), first == null ? null : first.getTarget().toString());
+            mailSender.send(email, first == null ? null : first.getTarget().toString(), body.toString());
         }
 
         log.info("Stop Monitor " + this);

@@ -16,7 +16,7 @@ import javax.mail.internet.MimeMessage;
 public class MailSenderImpl implements MailSender {
     private static final Logger log = Logger.getLogger(MailSenderImpl.class);
     @Override
-    public void send(String to, String body, String subject) {
+    public void send(String to, String subject, String body) {
         if(to != null) {
             log.debug("Sending email to " + to);
             Session session = Session.getInstance(Config.getInstance().getSmtp().getProperties());

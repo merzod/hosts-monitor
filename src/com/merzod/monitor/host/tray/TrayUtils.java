@@ -78,6 +78,7 @@ public class TrayUtils {
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                log.info("Stopped by user");
                 System.exit(0);
             }
         });
