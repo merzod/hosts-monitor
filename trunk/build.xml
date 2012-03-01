@@ -4,6 +4,7 @@
     <property name="src" value="${basedir}/src"/>
     <property name="bld" value="${basedir}/bld"/>
     <property name="lib" value="${basedir}/lib"/>
+    <property name="icons" value="${basedir}/icons"/>
     <property name="bin" value="${basedir}/bin"/>
     <property name="jarfile" value="${bin}/HostMonitor.jar"/>
     <property name="zipfile" value="HostMonitor"/>
@@ -23,11 +24,6 @@
     </target>
 
     <target name="pack" depends="build">
-        <copy todir="${bld}">
-            <fileset dir="${src}">
-                <include name="log4j.properties"/>
-            </fileset>
-        </copy>
         <jar destfile="${jarfile}">
             <fileset dir="${bld}"/>
             <manifest>
@@ -46,6 +42,11 @@
         <copy todir="${bin}/lib">
             <fileset dir="${lib}">
                 <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${bin}/icons">
+            <fileset dir="${icons}">
+                <include name="*.gif"/>
             </fileset>
         </copy>
         <zip file="${zipfile}.zip" basedir="${bin}"/>

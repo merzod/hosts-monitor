@@ -7,6 +7,7 @@ import com.merzod.monitor.host.mail.MailSenderImpl;
 import com.merzod.monitor.host.ping.SocketPing;
 import com.merzod.monitor.host.ping.Ping;
 import com.merzod.monitor.host.ping.TcpPing;
+import com.merzod.monitor.host.tray.TrayUtils;
 import com.merzod.monitor.host.xml.Config;
 import org.apache.log4j.Logger;
 
@@ -30,6 +31,7 @@ public class HostMonitor implements Monitor {
         table = Collections.synchronizedMap(new HashMap<Target, Result>());
         pings = new HashMap<Target.Protocol, Ping>();
         registerPings();
+        TrayUtils.getInstance().setIcon(TrayUtils.State.on);
     }
 
     public void setMailSender(MailSender mailSender) {
@@ -42,6 +44,7 @@ public class HostMonitor implements Monitor {
     }
 
     public void run() {
+        TrayUtils.getInstance().setIcon(TrayUtils.State.run);
         log.info("Start Monitor " + this);
         for (Target target : Config.getInstance().getTargets()) {
             new Thread(new PingThread(target)).start();
@@ -59,6 +62,7 @@ public class HostMonitor implements Monitor {
                             e.printStackTrace();
                         }
                     }
+                    TrayUtils.getInstance().setIcon(TrayUtils.State.on);
                     printResult();
                 }
             }
@@ -106,6 +110,7 @@ public class HostMonitor implements Monitor {
                 log.debug(message);
             }
             if(skp) {
+                TrayUtils.getInstance().displayError(target.toString());
                 target.setLastFailed(now);
                 Result result = table.get(target);
                 if(result.getState() != Result.State.SUCCESS) {
