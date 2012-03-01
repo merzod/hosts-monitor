@@ -26,6 +26,7 @@ public class HostMonitor implements Monitor {
     private int runThreads = 0;
     private MailSender mailSender = new MailSenderImpl();
     private final DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+    private boolean anyTargetPass = false;
 
     public HostMonitor() {
         table = Collections.synchronizedMap(new HashMap<Target, Result>());
@@ -44,6 +45,8 @@ public class HostMonitor implements Monitor {
     }
 
     public void run() {
+        // reset success flag
+        anyTargetPass = false;
         TrayUtils.getInstance().setIcon(TrayUtils.State.run);
         log.info("Start Monitor " + this);
         for (Target target : Config.getInstance().getTargets()) {
@@ -62,7 +65,6 @@ public class HostMonitor implements Monitor {
                             e.printStackTrace();
                         }
                     }
-                    TrayUtils.getInstance().setIcon(TrayUtils.State.on);
                     printResult();
                 }
             }
@@ -93,32 +95,34 @@ public class HostMonitor implements Monitor {
         long skip = Config.getInstance().getSkipInterval();
         long now = new Date().getTime();
         for(Target target : table.keySet()) {
-            // if target failed long enough ago - send email
-            long passed = now - target.getLastFailed();
-            boolean skp = passed > skip;
-            String lastFailed;
-            if(target.getLastFailed() == 0) {
-                lastFailed = "Never";
-            } else {
-                lastFailed = format.format(new Date(target.getLastFailed()));
-            }
-            // email state, in case of skipping - on info level, otherwise on debug
-            String message = target + " last time failed at: " + lastFailed + " passed: " + passed + " ms skip: " + !skp;
-            if(!skp) {
-                log.info(message);
-            } else {
-                log.debug(message);
-            }
-            if(skp) {
-                TrayUtils.getInstance().displayError(target.toString());
-                target.setLastFailed(now);
-                Result result = table.get(target);
-                if(result.getState() != Result.State.SUCCESS) {
+            Result result = table.get(target);
+            if(result.getState() != Result.State.SUCCESS) {
+                // if target failed long enough ago - send email
+                long passed = now - target.getLastFailed();
+                boolean skp = passed > skip;
+                String lastFailed;
+                if(target.getLastFailed() == 0) {
+                    lastFailed = "Never";
+                } else {
+                    lastFailed = format.format(new Date(target.getLastFailed()));
+                }
+                // email state, in case of skipping - on info level, otherwise on debug
+                String message = target + " last time failed at: " + lastFailed + " passed: " + passed + " ms skip: " + !skp;
+                if(!skp) {
+                    log.info(message);
+                } else {
+                    log.debug(message);
+                }
+                if(skp) {
+                    TrayUtils.getInstance().displayError(target.toString());
+                    target.setLastFailed(now);
                     String email = target.getListener();
                     // add result to target's listener and to root listener
                     results.get(email).add(result);
                     results.get(rootEmail).add(result);
                 }
+            } else {
+                anyTargetPass = true;
             }
         }
         return results;
@@ -129,6 +133,17 @@ public class HostMonitor implements Monitor {
      */
     void printResult() {
         Map<String, List<Result>> result = reformatResult();
+        if(anyTargetPass && result.size() == 0) {
+            // all target success
+            TrayUtils.getInstance().setIcon(TrayUtils.State.on);
+        } else if(anyTargetPass) {
+            // some targets success, some failed
+            TrayUtils.getInstance().setIcon(TrayUtils.State.yel);
+        } else {
+            // all failed
+            TrayUtils.getInstance().setIcon(TrayUtils.State.red);
+        }
+
         // if any failed - send email to listeners
         for(String email : result.keySet()) {
             // construct body from the List of Results

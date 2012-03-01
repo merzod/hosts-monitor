@@ -39,7 +39,7 @@ public class TrayUtils {
      */
     public void setIcon(State state) {
         if(isSupported) {
-            log.debug("settings icon: " + state);
+            log.debug("Settings icon: " + state);
             try {
                 if(icon == null) {
                     createTrayIcon();
@@ -47,7 +47,7 @@ public class TrayUtils {
                     tray.add(icon);
                 } else {
                     icon.setImage(createImage(state));
-                    icon.getImage().flush();
+                    icon.setToolTip(getAltText(state));
                 }
             } catch (IOException e) {
                 log.error("Error while creating TrayIcon", e);
@@ -72,7 +72,8 @@ public class TrayUtils {
      * @throws IOException in case of problems with image file
      */
     private void createTrayIcon() throws IOException {
-        icon = new TrayIcon(createImage(State.on), "HostMonitor");
+        State st = State.on;
+        icon = new TrayIcon(createImage(st), getAltText(st));
         PopupMenu menu = new PopupMenu();
         MenuItem exit = new MenuItem("Exit");
         exit.addActionListener(new ActionListener() {
@@ -85,6 +86,10 @@ public class TrayUtils {
         menu.add(exit);
         icon.setPopupMenu(menu);
     }
+    
+    private String getAltText(State state) {
+        return "HostMonitor - "+state.getAlt();
+    }
 
     private Image createImage(State state) throws IOException {
         return ImageIO.read(new File(state.getFile()));
@@ -94,18 +99,26 @@ public class TrayUtils {
      * Possible Icons of System Tray Item
      */
     public static enum State {
-        on("icons/comp.gif"),
-        run("icons/comp_run.gif");
-
+        on("icons/comp.gif", "Ok"),
+        run("icons/comp_run.gif", "Running"),
+        yel("icons/comp_yel.gif", "Some hosts are down"),
+        red("icons/comp_red.gif", "All hosts are down"),
+        ;
 
         private final String file;
+        private final String alt;
 
-        State(String file) {
+        State(String file, String alt) {
             this.file = file;
+            this.alt = alt;
         }
 
         public String getFile() {
             return file;
+        }
+
+        public String getAlt() {
+            return alt;
         }
     }
 }
