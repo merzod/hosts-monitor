@@ -15,14 +15,17 @@ import java.util.Map;
 public class TestHostMonitor extends TestCase implements MailSender{
 
     private HostMonitor monitor;
+    MailMonitorListener mail;
     private Map<String, String> mails;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         Config.load("config-test.xml");
+        mail = new MailMonitorListener();
         monitor = new HostMonitor();
-        monitor.setMailSender(this);
+        monitor.addListener(mail);
+        mail.setMailSender(this);
         mails = new HashMap<String, String>();
     }
 
@@ -33,7 +36,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
         monitor.table = new HashMap<Target, Result>();
         Target target = new Target(Target.Protocol.TCP, "host1", null);
         monitor.table.put(target, new Result(target, "success"));
-        monitor.printResult();
+        monitor.notifyListeners();
         assertEquals("No mails should be send", 0, mails.size());
     }
 
@@ -44,7 +47,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
         monitor.table = new HashMap<Target, Result>();
         Target target = new Target(Target.Protocol.TCP, "host1", null);
         monitor.table.put(target, new Result(target, new Exception("failed")));
-        monitor.printResult();
+        monitor.notifyListeners();
         assertEquals("Email should be send to root only", 1, mails.size());
         assertEquals("Email should be send to root only", Config.getInstance().getListener(), mails.keySet().iterator().next());
     }
@@ -64,14 +67,14 @@ public class TestHostMonitor extends TestCase implements MailSender{
         monitor.table.put(t1, r1);
         monitor.table.put(t2, r2);
         // do the job
-        monitor.printResult();
+        monitor.notifyListeners();
         // check results
         assertEquals("Email should be send twice", 2, mails.size());
         String adminMail = mails.get(Config.getInstance().getListener());
-        assertTrue("Root should receive both messages", adminMail.contains(monitor.getMessage(r1)));
-        assertTrue("Root should receive both messages", adminMail.contains(monitor.getMessage(r2)));
+        assertTrue("Root should receive both messages", adminMail.contains(mail.getMessage(r1)));
+        assertTrue("Root should receive both messages", adminMail.contains(mail.getMessage(r2)));
         String testMail = mails.get(email);
-        assertEquals(email + " should receive ", monitor.getMessage(r2), testMail);
+        assertEquals(email + " should receive ", mail.getMessage(r2), testMail);
     }
 
     /**
@@ -85,17 +88,17 @@ public class TestHostMonitor extends TestCase implements MailSender{
         Target target = new Target(Target.Protocol.TCP, "host1", null);
         monitor.table.put(target, new Result(target, new Exception("failed")));
         // process once and check that mail sent to root
-        monitor.printResult();
+        monitor.notifyListeners();
         assertEquals("Email should be send to root only", 1, mails.size());
         assertEquals("Email should be send to root only", Config.getInstance().getListener(), mails.keySet().iterator().next());
         // process twice and check that mail wasn't sent
         mails.clear();
-        monitor.printResult();
+        monitor.notifyListeners();
         assertEquals("Email shouldn't be send twice", 0, mails.size());
         // process one more time after skip interval passed (1 sec)
         Thread.sleep(1000);
         mails.clear();
-        monitor.printResult();
+        monitor.notifyListeners();
         assertEquals("Email should be send to root only", 1, mails.size());
         assertEquals("Email should be send to root only", Config.getInstance().getListener(), mails.keySet().iterator().next());
     }

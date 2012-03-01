@@ -19,7 +19,7 @@
         <!-- <password></password> -->
 
         <!-- Data of notification mail -->
-        <from>parabola@comodo.com</from>
+        <from>hostmonitor@comodo.com</from>
         <subject>Error while monitoring</subject>
     </smtp>
 
