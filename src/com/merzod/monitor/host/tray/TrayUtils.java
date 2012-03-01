@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Utils for System Tray
@@ -19,7 +20,15 @@ public class TrayUtils {
     private static TrayUtils instance;
     private boolean isSupported = true;
     private TrayIcon icon;
-
+    private Menu targets;
+    
+    public void addTargets(List<MenuItem> items) {
+        targets.removeAll();
+        for(MenuItem item : items) {
+            targets.add(item);
+        }
+    }
+    
     private TrayUtils() {
         if (!SystemTray.isSupported()) {
             log.warn("Tray is not supported");
@@ -75,6 +84,7 @@ public class TrayUtils {
         State st = State.on;
         icon = new TrayIcon(createImage(st), getAltText(st));
         PopupMenu menu = new PopupMenu();
+        targets = new Menu("Targets");
         MenuItem exit = new MenuItem("Exit");
         exit.addActionListener(new ActionListener() {
             @Override
@@ -83,6 +93,8 @@ public class TrayUtils {
                 System.exit(0);
             }
         });
+        menu.add(targets);
+        menu.addSeparator();
         menu.add(exit);
         icon.setPopupMenu(menu);
     }

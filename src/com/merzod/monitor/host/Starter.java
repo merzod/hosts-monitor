@@ -1,7 +1,9 @@
 package com.merzod.monitor.host;
 
 import com.merzod.monitor.host.monitor.HostMonitor;
+import com.merzod.monitor.host.monitor.MailMonitorListener;
 import com.merzod.monitor.host.monitor.Monitor;
+import com.merzod.monitor.host.tray.TrayMonitorListener;
 import com.merzod.monitor.host.xml.Config;
 import org.apache.log4j.Logger;
 
@@ -23,7 +25,10 @@ public class Starter {
     public void run() {
         try {
             Config.load();
-            timer.schedule(getTask(new HostMonitor()), 0, Config.getInstance().getInterval());
+            HostMonitor monitor = new HostMonitor();
+            monitor.addListener(new MailMonitorListener());
+            monitor.addListener(new TrayMonitorListener());
+            timer.schedule(getTask(monitor), 0, Config.getInstance().getInterval());
         } catch (Exception e) {
             log.fatal("Failed to start", e);
         }
