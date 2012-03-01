@@ -101,7 +101,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
     }
 
     @Override
-    public void send(String to, String body, String subject) {
+    public void send(String to, String subject, String body) {
         if(to != null) {
             mails.put(to, body);
         }
