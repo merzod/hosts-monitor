@@ -45,5 +45,11 @@ public class Starter {
 
     public static void main(String[] args) {
         new Starter();
+//        try {
+//            Config.load();
+//        } catch (Exception e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+//        new SettingsFrame();
     }
 }

@@ -33,11 +33,35 @@ public class Config {
 
     private Config() {}
 
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public void setTcpTimeout(int tcpTimeout) {
+        this.tcpTimeout = tcpTimeout;
+    }
+
+    public void setListener(String listener) {
+        this.listener = listener;
+    }
+
+    public void setSkipInterval(long skipInterval) {
+        this.skipInterval = skipInterval;
+    }
+
     public int getInterval() {
+        return interval * 1000;
+    }
+
+    public int getIntervalSec() {
         return interval;
     }
 
     public int getTcpTimeout() {
+        return tcpTimeout * 1000;
+    }
+
+    public int getTcpTimeoutSec() {
         return tcpTimeout;
     }
 
@@ -54,6 +78,10 @@ public class Config {
     }
 
     public long getSkipInterval() {
+        return skipInterval * 1000;
+    }
+
+    public long getSkipIntervalSec() {
         return skipInterval;
     }
 
@@ -72,9 +100,24 @@ public class Config {
         Serializer serializer = new Persister();
         File cfgFile = new File(file);
         me = serializer.read(Config.class, cfgFile);
-
-        me.interval *= 1000;
-        me.tcpTimeout *= 1000;
-        me.skipInterval *= 1000;
     }
+
+    public static void dump() throws Exception {
+        dump(file);
+    }
+
+    public static void dump(String file) throws Exception {
+        Serializer serializer = new Persister();
+        File cfgFile = new File(file);
+        serializer.write(Config.getInstance(), cfgFile);
+    }
+
+    public void addTarget(Target target) {
+        targets.add(target);
+    }
+
+    public void deleteTarget(Target target) {
+        targets.remove(target);
+    }
+
 }

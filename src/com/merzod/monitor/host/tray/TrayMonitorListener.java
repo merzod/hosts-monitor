@@ -20,11 +20,13 @@ public class TrayMonitorListener implements IMonitorListener{
         List<MenuItem> menu = new ArrayList<MenuItem>();
         for(Target target : table.keySet()) {
             Result result = table.get(target);
-            MenuItem item = new MenuItem(target.getHost());
+            MenuItem item = new MenuItem(target.getName());
             if(result.getState() == Result.State.SUCCESS) {
+                // success item
                 item.setEnabled(true);
                 anySuccess = true;
             } else {
+                // failed item
                 item.setEnabled(false);
                 anyFailed = true;
             }

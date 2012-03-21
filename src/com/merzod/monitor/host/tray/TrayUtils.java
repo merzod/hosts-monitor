@@ -1,5 +1,7 @@
 package com.merzod.monitor.host.tray;
 
+import com.merzod.monitor.host.ui.SettingsFrame;
+import com.merzod.monitor.host.ui.TargetsListModel;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -93,7 +95,15 @@ public class TrayUtils {
                 System.exit(0);
             }
         });
+        MenuItem settings = new MenuItem("Settings");
+        settings.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SettingsFrame();
+            }
+        });
         menu.add(targets);
+        menu.add(settings);
         menu.addSeparator();
         menu.add(exit);
         icon.setPopupMenu(menu);

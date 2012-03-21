@@ -9,7 +9,7 @@ import org.simpleframework.xml.Root;
 @Root
 public class Target {
     @Attribute (required = false)
-    private Protocol protocol = Protocol.TCP;
+    private Protocol protocol = Protocol.ICMP_TCP;
     @Attribute
     private String host;
     @Attribute (required = false)
@@ -17,6 +17,8 @@ public class Target {
     @Attribute (required = false)
     private int port = 0;
     private long lastFailed;
+    @Attribute (required = false)
+    private String name;
 
     public Target() {
     }
@@ -25,6 +27,26 @@ public class Target {
         this.protocol = protocol;
         this.host = host;
         this.listener = listener;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setListener(String listener) {
+        this.listener = listener;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPort() {
@@ -51,9 +73,16 @@ public class Target {
         this.lastFailed = lastFailed;
     }
 
+    public String getName() {
+        if(name != null && !name.isEmpty())
+            return name;
+        return getHost();
+    }
+
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder(protocol.toString());
+        string.append(": ").append(name);
         string.append(": ").append(host);
         if(protocol == Protocol.SOCKET) {
             string.append(":").append(port);
@@ -62,7 +91,7 @@ public class Target {
     }
 
     public static enum Protocol {
-        TCP,
+        ICMP_TCP,
         SOCKET,
     }
 

@@ -16,6 +16,7 @@
         </fileset>
     </path>
 
+    <!-- Compile all the sources -->
     <target name="build">
         <mkdir dir="${bld}"/>
         <javac destdir="${bld}" srcdir="${src}">
@@ -23,37 +24,45 @@
         </javac>
     </target>
 
+    <!-- Pack the project into JAR -->
     <target name="pack" depends="build">
+        <!-- make jar file -->
         <jar destfile="${jarfile}">
             <fileset dir="${bld}"/>
             <manifest>
                 <attribute name="Main-Class" value="com.merzod.monitor.host.Starter"/>
             </manifest>
         </jar>
+        <!-- copy to bin all the stuff -->
         <copy todir="${bin}">
             <fileset dir="${basedir}">
                 <include name="config.xml"/>
+                <include name="config.xml.bak"/>
                 <include name="start.sh"/>
             </fileset>
             <fileset dir="${src}">
                 <include name="log4j.properties"/>
             </fileset>
         </copy>
+        <!-- copy libraries -->
         <copy todir="${bin}/lib">
             <fileset dir="${lib}">
                 <include name="*.jar"/>
             </fileset>
         </copy>
+        <!-- copy icons -->
         <copy todir="${bin}/icons">
             <fileset dir="${icons}">
                 <include name="*.gif"/>
             </fileset>
         </copy>
+        <!-- make zip file -->
         <zip file="${zipfile}.zip" basedir="${bin}"/>
     </target>
 
     <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode.jar" name="gcupload"/>
 
+    <!-- Upload to code.google.com -->
     <target name="upload" depends="pack">
         <buildnumber/>
         <gcupload

@@ -31,7 +31,7 @@ public class HostMonitor implements Monitor {
     }
 
     private void registerPings() {
-        pings.put(Target.Protocol.TCP, new TcpPing());
+        pings.put(Target.Protocol.ICMP_TCP, new TcpPing());
         pings.put(Target.Protocol.SOCKET, new SocketPing());
     }
 
