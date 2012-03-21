@@ -26,8 +26,8 @@
     <!-- The list of targets to monitor -->
     <targets>
         <!-- Example of target, the 'listener' attribute is optional
-        <target protocol="TCP" host="localhost" listener="someone@mail.com"/> -->
-        <!--target protocol="TCP" host="127.0.0.1"/-->
+        <target protocol="ICMP_TCP" host="localhost" listener="someone@mail.com"/> -->
+        <!--target protocol="ICMP_TCP" host="127.0.0.1"/-->
         <target protocol="SOCKET" host="127.0.0.1" port="8443"/>
     </targets>
 </config>

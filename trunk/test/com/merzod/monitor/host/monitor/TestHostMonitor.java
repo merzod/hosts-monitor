@@ -34,7 +34,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
      */
     public void testPrintResultSuccess() {
         monitor.table = new HashMap<Target, Result>();
-        Target target = new Target(Target.Protocol.TCP, "host1", null);
+        Target target = new Target(Target.Protocol.ICMP_TCP, "host1", null);
         monitor.table.put(target, new Result(target, "success"));
         monitor.notifyListeners();
         assertEquals("No mails should be send", 0, mails.size());
@@ -45,7 +45,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
      */
     public void testPrintResultFailedToRoot() {
         monitor.table = new HashMap<Target, Result>();
-        Target target = new Target(Target.Protocol.TCP, "host1", null);
+        Target target = new Target(Target.Protocol.ICMP_TCP, "host1", null);
         monitor.table.put(target, new Result(target, new Exception("failed")));
         monitor.notifyListeners();
         assertEquals("Email should be send to root only", 1, mails.size());
@@ -60,8 +60,8 @@ public class TestHostMonitor extends TestCase implements MailSender{
         final String email = "test@com";
         // fill test results
         monitor.table = new HashMap<Target, Result>();
-        Target t1 = new Target(Target.Protocol.TCP, "host1", null);
-        Target t2 = new Target(Target.Protocol.TCP, "host2", email);
+        Target t1 = new Target(Target.Protocol.ICMP_TCP, "host1", null);
+        Target t2 = new Target(Target.Protocol.ICMP_TCP, "host2", email);
         Result r1 = new Result(t1, new Exception("failed"));
         Result r2 = new Result(t2, new Exception("failed"));
         monitor.table.put(t1, r1);
@@ -85,7 +85,7 @@ public class TestHostMonitor extends TestCase implements MailSender{
     public void testPrintResultDelay() throws Exception {
         // fill test results
         monitor.table = new HashMap<Target, Result>();
-        Target target = new Target(Target.Protocol.TCP, "host1", null);
+        Target target = new Target(Target.Protocol.ICMP_TCP, "host1", null);
         monitor.table.put(target, new Result(target, new Exception("failed")));
         // process once and check that mail sent to root
         monitor.notifyListeners();

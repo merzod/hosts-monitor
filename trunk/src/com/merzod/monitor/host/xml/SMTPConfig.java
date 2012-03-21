@@ -31,6 +31,38 @@ public class SMTPConfig {
         return from;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     public Properties getProperties() {
         if(props == null) {
             props = new Properties();
