@@ -7,6 +7,7 @@ import com.merzod.monitor.host.tray.TrayMonitorListener;
 import com.merzod.monitor.host.xml.Config;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,6 +45,16 @@ public class Starter {
     }
 
     public static void main(String[] args) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available
+        }
         new Starter();
 //        try {
 //            Config.load();

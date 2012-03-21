@@ -8,23 +8,18 @@ import java.awt.*;
 /**
  * @author opavlenko
  */
-public class TargetListRenderer extends JPanel implements ListCellRenderer {
-    private JLabel label = new JLabel();
-
+public class TargetListRenderer extends JLabel implements ListCellRenderer {
     public TargetListRenderer() {
         super();
-        this.add(label);
     }
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        label.setText(((Target) value).getName());
+        setText(((Target) value).getName());
         if(isSelected) {
-            label.setForeground(Color.WHITE);
-            setBackground(Color.GRAY);
+            setForeground(Color.RED);
         } else {
-            label.setForeground(Color.BLACK);
-            setBackground(Color.WHITE);
+            setForeground(Color.BLACK);
         }
         return this;
     }

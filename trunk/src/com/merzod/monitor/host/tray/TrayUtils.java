@@ -1,10 +1,10 @@
 package com.merzod.monitor.host.tray;
 
-import com.merzod.monitor.host.ui.SettingsFrame;
-import com.merzod.monitor.host.ui.TargetsListModel;
+import com.merzod.monitor.host.ui.SettingsForm;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -99,7 +99,11 @@ public class TrayUtils {
         settings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SettingsFrame();
+                JFrame frame = new JFrame("SettingsForm");
+                frame.setContentPane(new SettingsForm().getContent());
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setSize(400, 300);
+                frame.setVisible(true);
             }
         });
         menu.add(targets);
