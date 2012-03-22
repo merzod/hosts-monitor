@@ -19,6 +19,7 @@ public class Target {
     private long lastFailed;
     @Attribute (required = false)
     private String name;
+    private Result result;
 
     public Target() {
     }
@@ -27,6 +28,14 @@ public class Target {
         this.protocol = protocol;
         this.host = host;
         this.listener = listener;
+    }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setResult(Result result) {
+        this.result = result;
     }
 
     public void setProtocol(Protocol protocol) {

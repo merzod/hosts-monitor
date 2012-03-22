@@ -99,10 +99,10 @@ public class TrayUtils {
         settings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame("SettingsForm");
+                JFrame frame = new JFrame("Host Monitor Settings");
                 frame.setContentPane(new SettingsForm().getContent());
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frame.setSize(400, 300);
+                frame.setSize(500, 300);
                 frame.setVisible(true);
             }
         });

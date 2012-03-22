@@ -110,6 +110,7 @@ public class HostMonitor implements Monitor {
             } else {
                 result = new Result(target, new Exception("Unsupported protocol: " + target.getProtocol()));
             }
+            target.setResult(result);
             table.put(target, result);
             // yell about the result in case of failed, otherwise just debug
             String message = "Stop PingThread for " + target + " result " + result;
