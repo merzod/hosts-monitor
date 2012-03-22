@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author opavlenko
  */
-public class TrayMonitorListener implements IMonitorListener{
+public class TrayMonitorListener implements IMonitorListener {
     @Override
     public void monitorCycleFinished(Map<Target, Result> table) {
         boolean anyFailed = false;
