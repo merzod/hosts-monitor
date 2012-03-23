@@ -1,6 +1,11 @@
 package com.merzod.monitor.host.xml;
 
 import com.merzod.monitor.host.Target;
+import com.merzod.monitor.host.monitor.HostMonitor;
+import com.merzod.monitor.host.monitor.IMonitorListener;
+import com.merzod.monitor.host.monitor.MailMonitorListener;
+import com.merzod.monitor.host.tray.TrayMonitorListener;
+import org.apache.log4j.Logger;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -28,10 +33,18 @@ public class Config {
     @Element
     private long skipInterval;
 
+    private HostMonitor monitor;
+    private MailMonitorListener mailMonitorListener;
+
     private static Config me;
     public static final String file = "config.xml";
+    private static Logger log = Logger.getLogger(Config.class);
 
     private Config() {}
+
+    public void setMonitor(HostMonitor monitor) {
+        this.monitor = monitor;
+    }
 
     public void setInterval(int interval) {
         this.interval = interval;
@@ -100,6 +113,37 @@ public class Config {
         Serializer serializer = new Persister();
         File cfgFile = new File(file);
         me = serializer.read(Config.class, cfgFile);
+    }
+
+    public void enableMailing() {
+        if(monitor != null) {
+            if(mailMonitorListener == null) {
+                mailMonitorListener = new MailMonitorListener();
+            }
+            addHostMonitorListener(mailMonitorListener);
+        } else {
+            log.error("Enabling mailing for empty monitor");
+        }
+    }
+
+    public void disableMailing() {
+        if(monitor != null) {
+            if(mailMonitorListener != null) {
+                removeHostMonitorListener(mailMonitorListener);
+            } else {
+                log.warn("There was no MailMonitorListener enabled");
+            }
+        } else {
+            log.error("Disabling mailing for empty monitor");
+        }
+    }
+
+    public void addHostMonitorListener(IMonitorListener l) {
+        monitor.addListener(l);
+    }
+
+    public void removeHostMonitorListener(IMonitorListener l) {
+        monitor.removeListener(l);
     }
 
     public static void dump() throws Exception {

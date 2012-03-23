@@ -37,6 +37,7 @@ public class SettingsForm implements ActionListener {
     private JPasswordField pass;
     private JTextField subject;
     private JTextField from;
+    private JCheckBox enable;
 
     private Target target;
 
@@ -57,14 +58,16 @@ public class SettingsForm implements ActionListener {
         pass.setText(Config.getInstance().getSmtp().getPassword());
         subject.setText(Config.getInstance().getSmtp().getSubject());
         from.setText(Config.getInstance().getSmtp().getFrom());
+        enable.setSelected(Config.getInstance().getSmtp().isEnabled());
         smtpSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Config.getInstance().getSmtp().setHost(smtpHost.getText());
                 Config.getInstance().getSmtp().setUser(user.getText());
-                Config.getInstance().getSmtp().setPassword(pass.getText());
+                Config.getInstance().getSmtp().setPassword(new String(pass.getPassword()));
                 Config.getInstance().getSmtp().setSubject(subject.getText());
                 Config.getInstance().getSmtp().setFrom(from.getText());
+                Config.getInstance().getSmtp().setEnabled(enable.isSelected());
                 dumpConfig();
             }
         });
