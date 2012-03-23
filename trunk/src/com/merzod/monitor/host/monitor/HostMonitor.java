@@ -72,6 +72,7 @@ public class HostMonitor implements Monitor {
                         }
                     }
                     notifyListeners();
+                    table.clear();
                 }
             }
         }).start();

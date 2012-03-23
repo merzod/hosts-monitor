@@ -2,6 +2,7 @@ package com.merzod.monitor.host.xml;
 
 import com.merzod.monitor.host.Target;
 import com.merzod.monitor.host.monitor.HostMonitor;
+import com.merzod.monitor.host.monitor.HostMonitorListersManager;
 import com.merzod.monitor.host.monitor.IMonitorListener;
 import com.merzod.monitor.host.monitor.MailMonitorListener;
 import com.merzod.monitor.host.tray.TrayMonitorListener;
@@ -32,15 +33,24 @@ public class Config {
     private String listener;
     @Element
     private long skipInterval;
+    @Element (required = false)
+    private boolean enableTrayNotifications = true;
 
     private HostMonitor monitor;
-    private MailMonitorListener mailMonitorListener;
 
     private static Config me;
     public static final String file = "config.xml";
     private static Logger log = Logger.getLogger(Config.class);
 
     private Config() {}
+
+    public boolean isEnableTrayNotifications() {
+        return enableTrayNotifications;
+    }
+
+    public void setEnableTrayNotifications(boolean enableTrayNotifications) {
+        this.enableTrayNotifications = enableTrayNotifications;
+    }
 
     public void setMonitor(HostMonitor monitor) {
         this.monitor = monitor;
@@ -113,29 +123,6 @@ public class Config {
         Serializer serializer = new Persister();
         File cfgFile = new File(file);
         me = serializer.read(Config.class, cfgFile);
-    }
-
-    public void enableMailing() {
-        if(monitor != null) {
-            if(mailMonitorListener == null) {
-                mailMonitorListener = new MailMonitorListener();
-            }
-            addHostMonitorListener(mailMonitorListener);
-        } else {
-            log.error("Enabling mailing for empty monitor");
-        }
-    }
-
-    public void disableMailing() {
-        if(monitor != null) {
-            if(mailMonitorListener != null) {
-                removeHostMonitorListener(mailMonitorListener);
-            } else {
-                log.warn("There was no MailMonitorListener enabled");
-            }
-        } else {
-            log.error("Disabling mailing for empty monitor");
-        }
     }
 
     public void addHostMonitorListener(IMonitorListener l) {
