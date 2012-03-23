@@ -1,33 +1,17 @@
-<!-- Configuration of HostMonitor -->
 <config>
-    <!-- Common configuration properties -->
-    <!-- Monitoring interval, will run monitoring process each 'interval' sec -->
-    <interval>30</interval>
-    <!-- ICMP_TCP Timeout, will assume that ping failed after 'tcpTimeout' sec pass -->
-    <tcpTimeout>3</tcpTimeout>
-    <!-- The main listener, will receive full report in case of any error -->
-    <listener>merzod@gmail.com</listener>
-    <!-- Skip interval, will skip duplicate errors within 'skipInterval' sec -->
-    <skipInterval>60</skipInterval>
-
-    <!-- SMTP configuration properties -->
-    <smtp>
-        <!-- SMTP Host -->
-        <host>mail.comodo.od.ua</host>
-        <!-- Authentication data for SMTP Host -->
-        <user>apavlenko</user>
-        <!-- <password></password> -->
-
-        <!-- Data of notification mail -->
-        <from>hostmonitor@comodo.com</from>
-        <subject>Error while monitoring</subject>
-    </smtp>
-
-    <!-- The list of targets to monitor -->
-    <targets>
-        <!-- Example of target, the 'listener' attribute is optional
-        <target protocol="ICMP_TCP" host="localhost" listener="someone@mail.com"/> -->
-        <!--target protocol="ICMP_TCP" host="127.0.0.1"/-->
-        <target protocol="SOCKET" host="127.0.0.1" name="My host" port="9443"/>
-    </targets>
+   <interval>30</interval>
+   <tcpTimeout>3</tcpTimeout>
+   <targets class="java.util.ArrayList">
+      <target protocol="SOCKET" host="127.0.0.1" port="9443" name="My host" enabled="true"/>
+      <target protocol="SOCKET" host="127.0.0.1" port="8443" name="My host 2" enabled="false"/>
+   </targets>
+   <smtp enabled="false">
+      <host>mail.comodo.od.ua</host>
+      <user>apavlenko</user>
+      <password></password>
+      <subject>Error while monitoring</subject>
+      <from>hostmonitor@comodo.com</from>
+   </smtp>
+   <listener>merzod@gmail.com</listener>
+   <skipInterval>60</skipInterval>
 </config>

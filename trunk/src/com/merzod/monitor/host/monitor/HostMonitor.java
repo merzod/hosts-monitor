@@ -54,7 +54,9 @@ public class HostMonitor implements Monitor {
         TrayUtils.getInstance().setIcon(TrayUtils.State.run);
         log.info("Start Monitor " + this);
         for (Target target : Config.getInstance().getTargets()) {
-            new Thread(new PingThread(target)).start();
+            if(target.isEnabled()) {
+                new Thread(new PingThread(target)).start();
+            }
         }
 
         // start print result thread. it will wait until all the PingThreads to finish
