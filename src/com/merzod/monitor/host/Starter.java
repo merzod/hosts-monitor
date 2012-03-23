@@ -1,6 +1,7 @@
 package com.merzod.monitor.host;
 
 import com.merzod.monitor.host.monitor.HostMonitor;
+import com.merzod.monitor.host.monitor.HostMonitorListersManager;
 import com.merzod.monitor.host.monitor.MailMonitorListener;
 import com.merzod.monitor.host.monitor.Monitor;
 import com.merzod.monitor.host.tray.TrayMonitorListener;
@@ -25,13 +26,15 @@ public class Starter {
 
     public void run() {
         try {
+            // load config form file
             Config.load();
+            // create the monitor
             HostMonitor monitor = new HostMonitor();
+            // store monitor in config
             Config.getInstance().setMonitor(monitor);
-            if(Config.getInstance().getSmtp().isEnabled()) {
-                Config.getInstance().enableMailing();
-            }
-            monitor.addListener(new TrayMonitorListener());
+            // init listeners
+            HostMonitorListersManager.getInstance().init();
+            // start monitoring
             timer.schedule(getTask(monitor), 0, Config.getInstance().getInterval());
         } catch (Exception e) {
             log.fatal("Failed to start", e);

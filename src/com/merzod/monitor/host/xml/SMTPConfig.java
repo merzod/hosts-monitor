@@ -1,5 +1,6 @@
 package com.merzod.monitor.host.xml;
 
+import com.merzod.monitor.host.monitor.HostMonitorListersManager;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -33,9 +34,9 @@ public class SMTPConfig {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if(enabled) {
-            Config.getInstance().enableMailing();
+            HostMonitorListersManager.getInstance().enableMailing();
         } else {
-            Config.getInstance().disableMailing();
+            HostMonitorListersManager.getInstance().disableMailing();
         }
     }
 

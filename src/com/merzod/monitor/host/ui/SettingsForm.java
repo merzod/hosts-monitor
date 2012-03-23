@@ -39,6 +39,7 @@ public class SettingsForm implements ActionListener {
     private JTextField from;
     private JCheckBox enable;
     private JCheckBox targetEnable;
+    private JCheckBox tray;
 
     private Target target;
 
@@ -79,6 +80,7 @@ public class SettingsForm implements ActionListener {
         skipInterval.setValue(Config.getInstance().getSkipIntervalSec());
         tcpTimeout.setValue(Config.getInstance().getTcpTimeoutSec());
         commonEmail.setText(Config.getInstance().getListener());
+        tray.setSelected(Config.getInstance().isEnableTrayNotifications());
         commonSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,6 +88,7 @@ public class SettingsForm implements ActionListener {
                 Config.getInstance().setSkipInterval(Integer.parseInt(skipInterval.getValue().toString()));
                 Config.getInstance().setTcpTimeout(Integer.parseInt(tcpTimeout.getValue().toString()));
                 Config.getInstance().setListener(commonEmail.getText());
+                Config.getInstance().setEnableTrayNotifications(tray.isSelected());
                 dumpConfig();
             }
         });

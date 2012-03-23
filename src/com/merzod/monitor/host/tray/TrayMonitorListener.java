@@ -3,9 +3,11 @@ package com.merzod.monitor.host.tray;
 import com.merzod.monitor.host.Result;
 import com.merzod.monitor.host.Target;
 import com.merzod.monitor.host.monitor.IMonitorListener;
+import com.merzod.monitor.host.xml.Config;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,13 @@ public class TrayMonitorListener implements IMonitorListener {
                 // failed item
                 item.setEnabled(false);
                 anyFailed = true;
+                if(Config.getInstance().isEnableTrayNotifications()) {
+                    long now = new Date().getTime();
+                    long passed = now - target.getLastFailed();
+                    if(passed > Config.getInstance().getSkipInterval()) {
+                        TrayUtils.getInstance().displayError(target.toString());
+                    }
+                }
             }
             menu.add(item);
         }
