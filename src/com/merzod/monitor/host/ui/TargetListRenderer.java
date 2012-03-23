@@ -38,13 +38,17 @@ public class TargetListRenderer extends JPanel implements ListCellRenderer {
         } else {
             label.setIcon(failed);
         }
-        
+
         if(isSelected) {
             label.setForeground(Color.WHITE);
-            setBackground(Color.GRAY);
+            setBackground(Color.DARK_GRAY);
         } else {
             label.setForeground(Color.BLACK);
             setBackground(Color.WHITE);
+        }
+
+        if(!t.isEnabled()) {
+            label.setForeground(Color.GRAY);
         }
         return this;
     }

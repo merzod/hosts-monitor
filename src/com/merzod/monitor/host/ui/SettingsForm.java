@@ -38,6 +38,7 @@ public class SettingsForm implements ActionListener {
     private JTextField subject;
     private JTextField from;
     private JCheckBox enable;
+    private JCheckBox targetEnable;
 
     private Target target;
 
@@ -91,6 +92,7 @@ public class SettingsForm implements ActionListener {
     }
 
     private void initTargets() {
+        targetEnable.setSelected(true);
         for(Target.Protocol prot : Target.Protocol.values()) {
             protocol.addItem(prot);
         }
@@ -134,6 +136,7 @@ public class SettingsForm implements ActionListener {
                     // lost selection
                     reset();
                 } else {
+                    targetEnable.setSelected(target.isEnabled());
                     name.setText(target.getName());
                     host.setText(target.getHost());
                     port.setText(String.valueOf(target.getPort()));
@@ -187,6 +190,7 @@ public class SettingsForm implements ActionListener {
 
     private void updateTarget(Target t) {
         if(check()) {
+            t.setEnabled(targetEnable.isSelected());
             t.setName(name.getText());
             t.setHost(host.getText());
             if(port.isEnabled()) {
@@ -226,6 +230,7 @@ public class SettingsForm implements ActionListener {
         email.setText("");
         save.setEnabled(false);
         delete.setEnabled(false);
+        enable.setSelected(true);
     }
 
     public JPanel getContent() {

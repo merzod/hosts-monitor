@@ -20,6 +20,8 @@ public class Target {
     @Attribute (required = false)
     private String name;
     private Result result;
+    @Attribute (required = false)
+    private boolean enabled = true;
 
     public Target() {
     }
@@ -28,6 +30,14 @@ public class Target {
         this.protocol = protocol;
         this.host = host;
         this.listener = listener;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Result getResult() {
