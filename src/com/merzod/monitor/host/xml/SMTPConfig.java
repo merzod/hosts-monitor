@@ -1,5 +1,6 @@
 package com.merzod.monitor.host.xml;
 
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -20,8 +21,23 @@ public class SMTPConfig {
     private String subject;
     @Element
     private String from;
+    @Attribute (required = false)
+    private boolean enabled = true;
 
     private Properties props;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if(enabled) {
+            Config.getInstance().enableMailing();
+        } else {
+            Config.getInstance().disableMailing();
+        }
+    }
 
     public String getSubject() {
         return subject;

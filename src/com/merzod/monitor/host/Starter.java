@@ -27,7 +27,10 @@ public class Starter {
         try {
             Config.load();
             HostMonitor monitor = new HostMonitor();
-            monitor.addListener(new MailMonitorListener());
+            Config.getInstance().setMonitor(monitor);
+            if(Config.getInstance().getSmtp().isEnabled()) {
+                Config.getInstance().enableMailing();
+            }
             monitor.addListener(new TrayMonitorListener());
             timer.schedule(getTask(monitor), 0, Config.getInstance().getInterval());
         } catch (Exception e) {

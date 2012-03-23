@@ -99,10 +99,16 @@ public class TrayUtils {
         settings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int w = 500;
+                int h = 300;
+                int x = (screenSize.width/2) - (w/2);
+                int y = (screenSize.height/2) - (h/2);
                 JFrame frame = new JFrame("Host Monitor Settings");
                 frame.setContentPane(new SettingsForm().getContent());
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frame.setSize(500, 300);
+                frame.setSize(w, h);
+                frame.setBounds(x, y, w, h);
                 frame.setVisible(true);
             }
         });
