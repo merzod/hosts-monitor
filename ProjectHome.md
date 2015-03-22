@@ -1,0 +1,1 @@
+Monitoring hosts availability by different protocols and notify by email about results. Configuration in xml
